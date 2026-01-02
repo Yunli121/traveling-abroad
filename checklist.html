@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的旅遊隨行手冊</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 15px; }
+        .page { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; padding: 20px; }
+        h2 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-top: 0; }
+        .item { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .item:last-child { border-bottom: none; }
+        input[type="checkbox"] { width: 20px; height: 20px; margin-right: 15px; cursor: pointer; }
+        .itinerary-day { margin-bottom: 15px; }
+        .day-title { font-weight: bold; color: #3498db; }
+        .badge { background: #e8f4fd; color: #3498db; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; margin-left: 10px; }
+        ul { padding-left: 20px; color: #555; }
+        li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="page">
+        <h2>📋 第一頁：出國清單</h2>
+        <div class="item"><input type="checkbox"> 護照與簽證 (有效期 6 個月以上)</div>
+        <div class="item"><input type="checkbox"> 機票與訂房證明 (電子檔/紙本)</div>
+        <div class="item"><input type="checkbox"> 外幣、信用卡、提款卡</div>
+        <div class="item"><input type="checkbox"> 行動電源、各國轉接頭</div>
+        <div class="item"><input type="checkbox"> 個人常備藥品、盥洗用品</div>
+        <div class="item"><input type="checkbox"> 換洗衣物、舒適鞋子</div>
+    </div>
+
+    <div class="page">
+        <h2>✈️ 第二頁：行程概覽</h2>
+        <div class="itinerary-day">
+            <span class="day-title">Day 1: 抵達與安頓</span>
+            <ul>
+                <li>搭機抵達目的地</li>
+                <li>辦理飯店 Check-in</li>
+                <li>飯店周邊探索、享用當地晚餐</li>
+            </ul>
+        </div>
+        <div class="itinerary-day">
+            <span class="day-title">Day 2: 城市地標之旅</span>
+            <ul>
+                <li>上午：造訪主要文化景點/古蹟</li>
+                <li>下午：市區商圈、地標性建築拍照</li>
+                <li>晚上：特色餐廳或夜景行程</li>
+            </ul>
+        </div>
+        <div class="itinerary-day">
+            <span class="day-title">Day 3: 購物與返程</span>
+            <ul>
+                <li>上午：前往伴手禮聚集區採購</li>
+                <li>下午：最後巡禮、整理行李</li>
+                <li>前往機場準備登機</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="page">
+        <h2>🎁 第三頁：伴手禮任務</h2>
+        <div class="item"><input type="checkbox"> 當地限定零食 / 點心</div>
+        <div class="item"><input type="checkbox"> 藥妝、護膚保養品</div>
+        <div class="item"><input type="checkbox"> 紀念性文創小物 (如明信片、磁鐵)</div>
+        <div class="item"><input type="checkbox"> 長輩/主管專用伴手禮盒</div>
+        <div class="item"><input type="checkbox"> 代購委託項目</div>
+    </div>
+
+</body>
+</html>
