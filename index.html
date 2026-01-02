@@ -6,10 +6,9 @@
     <title>我的旅遊隨行手冊</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <style>
-        :root { --primary: #5da9e9; --bg: #f8f9fa; --accent: #ff9f43; --green: #2ecc71; }
+        :root { --primary: #5da9e9; --bg: #f8f9fa; --accent: #ff9f43; --green: #2ecc71; --red: #ff4d4d; }
         body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; height: 100vh; display: flex; flex-direction: column; }
         
-        /* 導覽列 */
         .nav-bar { display: flex; background: white; border-bottom: 1px solid #ddd; padding: 10px 2px; justify-content: space-around; z-index: 100; overflow-x: auto; }
         .nav-item { font-size: 10px; color: #777; border: none; background: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; min-width: 55px; }
         .nav-item.active { color: var(--primary); font-weight: bold; }
@@ -17,26 +16,30 @@
         .swiper { width: 100%; flex: 1; }
         .swiper-slide { padding: 20px; box-sizing: border-box; overflow-y: auto; background: #fff; }
         
-        /* 封面極簡化 */
+        /* 封面 */
         .cover-page { display: flex; flex-direction: column; height: 100%; padding: 10px 0; }
         #displayTitle { font-size: 1.6rem; margin: 0; font-weight: bold; text-align: center; color: #333; }
         #displayDate { font-size: 0.9rem; color: #888; text-align: center; margin-bottom: 10px; }
         .cover-img-container { width: 100%; flex: 1; background: #f0f0f0; border-radius: 12px; overflow: hidden; position: relative; border: 1px solid #eee; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; }
         .cover-img-container img { width: 100%; height: 100%; object-fit: cover; }
-        .mini-controls { display: flex; justify-content: center; gap: 10px; padding: 0 20px; }
-        .mini-input { border: none; border-bottom: 1px solid #ddd; font-size: 12px; padding: 4px; color: #999; width: 40%; background: transparent; text-align: center; }
-        .mini-input:focus { outline: none; border-bottom-color: var(--primary); color: #333; }
+        .mini-controls { display: flex; justify-content: center; gap: 10px; padding: 0 10px; }
+        .mini-input { border: none; border-bottom: 1px solid #ddd; font-size: 12px; padding: 4px; color: #999; width: 45%; background: transparent; text-align: center; }
 
-        /* 通用樣式 */
-        h2 { border-left: 5px solid var(--primary); padding-left: 10px; color: #333; margin: 0 0 15px 0; font-size: 1.2rem; }
+        /* 通用元件 */
+        h2 { border-left: 5px solid var(--primary); padding-left: 10px; color: #333; margin: 0 0 15px 0; font-size: 1.1rem; }
         .input-group { display: flex; gap: 8px; margin-bottom: 15px; background: #f0f2f5; padding: 10px; border-radius: 8px; flex-direction: column; }
-        .input-row { display: flex; gap: 8px; }
-        input, textarea { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
-        button { border: none; border-radius: 4px; padding: 8px 12px; cursor: pointer; }
+        .input-row { display: flex; gap: 5px; }
+        input, textarea { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; min-width: 0; }
+        button { border: none; border-radius: 4px; padding: 8px 12px; cursor: pointer; white-space: nowrap; }
         .btn-add { background: var(--primary); color: white; }
-        .btn-del { background: #ffeded; color: #ff4d4d; border-radius: 20px; font-size: 12px; }
+        .btn-del { background: #ffeded; color: #ff4d4d; border-radius: 20px; font-size: 12px; padding: 4px 10px; }
         .list-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
-        .calc-result { font-size: 1.5rem; color: var(--green); font-weight: bold; text-align: center; margin-top: 10px; }
+
+        /* 工具箱修正 */
+        .calc-box { background: #fffbe6; border: 1px solid #ffe58f; padding: 12px; border-radius: 8px; margin-bottom: 15px; }
+        .calc-result { font-size: 1.4rem; color: var(--green); font-weight: bold; text-align: center; margin-top: 10px; border-top: 1px dashed #ffe58f; padding-top: 10px; }
+        .reset-section { margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; }
+        .btn-reset { background: var(--red); color: white; width: 100%; padding: 12px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -57,15 +60,13 @@
             <div class="cover-page">
                 <h1 id="displayTitle">我的旅行手冊</h1>
                 <div id="displayDate">尚未設定日期</div>
-                
                 <div class="cover-img-container" onclick="document.getElementById('coverInput').click()">
                     <img id="coverDisplay" src="" style="display:none;">
-                    <div style="color:#bbb; font-size: 14px;" id="hintText">＋ 點擊設定封面照片</div>
+                    <div style="color:#bbb; font-size: 14px;" id="hintText">＋ 設定封面照片</div>
                 </div>
-
                 <div class="mini-controls">
                     <input type="file" id="coverInput" accept="image/*" style="display:none" onchange="loadCover(this)">
-                    <input type="text" class="mini-input" placeholder="修改標題..." oninput="updateTitle(this.value)">
+                    <input type="text" class="mini-input" placeholder="旅程標題" oninput="updateTitle(this.value)">
                     <input type="date" class="mini-input" onchange="updateDate(this.value)">
                 </div>
             </div>
@@ -75,7 +76,7 @@
             <h2>📋 準備清單</h2>
             <div class="input-group">
                 <div class="input-row">
-                    <input type="text" id="todoInput" placeholder="自定義項目...">
+                    <input type="text" id="todoInput" placeholder="新增清單項目...">
                     <button class="btn-add" onclick="addItem('todoList', 'todoInput')">＋</button>
                 </div>
             </div>
@@ -90,7 +91,7 @@
             <div class="input-group">
                 <input type="date" id="itinDate" style="margin-bottom: 8px;">
                 <div class="input-row">
-                    <input type="text" id="itineraryInput" placeholder="行程景點...">
+                    <input type="text" id="itineraryInput" placeholder="景點名稱...">
                     <button class="btn-add" onclick="addItinerary()">＋</button>
                 </div>
             </div>
@@ -100,8 +101,8 @@
         <div class="swiper-slide">
             <h2>💰 每日花費</h2>
             <div class="input-group">
-                <input type="text" id="expName" placeholder="項目">
-                <div class="input-row">
+                <input type="text" id="expName" placeholder="項目內容">
+                <div class="input-row" style="margin-top:5px;">
                     <input type="number" id="expAmount" placeholder="金額">
                     <button class="btn-add" onclick="addExpense()" style="flex:1;">記帳</button>
                 </div>
@@ -114,7 +115,7 @@
             <h2>🎁 伴手禮清單</h2>
             <div class="input-group">
                 <div class="input-row">
-                    <input type="text" id="giftInput" placeholder="品名...">
+                    <input type="text" id="giftInput" placeholder="品名">
                     <input type="file" id="giftImgInput" accept="image/*" style="display:none" onchange="previewGiftImg(this)">
                     <button onclick="document.getElementById('giftImgInput').click()" style="background:#ddd;">📷</button>
                 </div>
@@ -123,22 +124,28 @@
                     <button class="btn-add" onclick="addGift()" style="flex:1;">＋</button>
                 </div>
             </div>
-            <div id="giftPreView" style="margin-bottom:10px;"></div>
+            <div id="giftPreView" style="margin-bottom:10px; font-size: 12px; color: var(--green);"></div>
             <div id="giftList"></div>
         </div>
 
         <div class="swiper-slide">
             <h2>🛠️ 旅遊工具箱</h2>
-            <div style="background: #fffbe6; border: 1px solid #ffe58f; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                <strong>💱 匯率換算</strong>
-                <div style="display:flex; gap:5px; margin-top:10px;">
-                    <input type="number" id="rate" placeholder="匯率">
+            <div class="calc-box">
+                <strong>💱 匯率換算 (輸入即更新)</strong>
+                <div style="display:flex; gap:8px; margin-top:10px;">
+                    <input type="number" id="rate" placeholder="匯率 (例 0.22)" oninput="calcExchange()">
                     <input type="number" id="foreignAmount" placeholder="外幣金額" oninput="calcExchange()">
                 </div>
                 <div class="calc-result">≈ NT$ <span id="twAmount">0</span></div>
             </div>
+
             <h2>📝 旅遊筆記</h2>
-            <textarea id="noteArea" placeholder="紀錄重要資訊..."></textarea>
+            <textarea id="noteArea" style="width:100%; height:120px; padding:10px; border-radius:8px; border:1px solid #ccc;" placeholder="紀錄重要密碼、地址..."></textarea>
+            
+            <div class="reset-section">
+                <p style="font-size:11px; color:#999; margin-bottom:10px;">警告：重置將清空所有手寫內容</p>
+                <button class="btn-reset" onclick="resetAll()">🗑️ 重置所有內容</button>
+            </div>
         </div>
 
     </div>
@@ -155,6 +162,26 @@
     });
     function goToPage(index) { swiper.slideTo(index); }
 
+    // 匯率計算修正
+    function calcExchange() {
+        const r = parseFloat(document.getElementById('rate').value);
+        const f = parseFloat(document.getElementById('foreignAmount').value);
+        const display = document.getElementById('twAmount');
+        if (!isNaN(r) && !isNaN(f)) {
+            display.innerText = Math.round(r * f).toLocaleString();
+        } else {
+            display.innerText = "0";
+        }
+    }
+
+    // 重置功能
+    function resetAll() {
+        if(confirm("確定要刪除所有旅遊記錄嗎？這項動作無法復原。")) {
+            location.reload(); // 透過重新整理網頁來還原初始狀態
+        }
+    }
+
+    // 封面功能
     function loadCover(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
@@ -170,6 +197,7 @@
     function updateTitle(val) { document.getElementById('displayTitle').innerText = val || "我的旅行手冊"; }
     function updateDate(val) { document.getElementById('displayDate').innerText = val ? "出發日期：" + val : "尚未設定日期"; }
 
+    // 清單與清單功能
     function addItem(listId, inputId) {
         const input = document.getElementById(inputId);
         if (!input.value) return;
@@ -196,7 +224,7 @@
     function previewGiftImg(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
-            reader.onload = e => { giftTempImg = e.target.result; document.getElementById('giftPreView').innerHTML = `📷 已選取`; };
+            reader.onload = e => { giftTempImg = e.target.result; document.getElementById('giftPreView').innerHTML = `✔ 圖片已就緒`; };
             reader.readAsDataURL(input.files[0]);
         }
     }
@@ -228,11 +256,6 @@
         total -= val;
         document.getElementById('totalDisplay').innerText = total;
         btn.parentElement.parentElement.remove();
-    }
-    function calcExchange() {
-        const r = document.getElementById('rate').value;
-        const f = document.getElementById('foreignAmount').value;
-        if (r && f) document.getElementById('twAmount').innerText = Math.round(r * f);
     }
 </script>
 </body>
