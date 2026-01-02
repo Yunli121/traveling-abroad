@@ -2,70 +2,238 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>我的旅遊隨行手冊</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 15px; }
-        .page { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; padding: 20px; }
-        h2 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-top: 0; }
-        .item { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
-        .item:last-child { border-bottom: none; }
-        input[type="checkbox"] { width: 20px; height: 20px; margin-right: 15px; cursor: pointer; }
-        .itinerary-day { margin-bottom: 15px; }
-        .day-title { font-weight: bold; color: #3498db; }
-        .badge { background: #e8f4fd; color: #3498db; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; margin-left: 10px; }
-        ul { padding-left: 20px; color: #555; }
-        li { margin-bottom: 5px; }
+        :root { --primary: #5da9e9; --bg: #f8f9fa; --accent: #ff9f43; --green: #2ecc71; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; height: 100vh; display: flex; flex-direction: column; }
+        
+        /* 導覽列 */
+        .nav-bar { display: flex; background: white; border-bottom: 1px solid #ddd; padding: 10px 2px; justify-content: space-around; z-index: 100; overflow-x: auto; }
+        .nav-item { font-size: 10px; color: #777; border: none; background: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; min-width: 55px; }
+        .nav-item.active { color: var(--primary); font-weight: bold; }
+
+        .swiper { width: 100%; flex: 1; }
+        .swiper-slide { padding: 20px; box-sizing: border-box; overflow-y: auto; background: #fff; }
+        
+        /* 封面極簡化 */
+        .cover-page { display: flex; flex-direction: column; height: 100%; padding: 10px 0; }
+        #displayTitle { font-size: 1.6rem; margin: 0; font-weight: bold; text-align: center; color: #333; }
+        #displayDate { font-size: 0.9rem; color: #888; text-align: center; margin-bottom: 10px; }
+        .cover-img-container { width: 100%; flex: 1; background: #f0f0f0; border-radius: 12px; overflow: hidden; position: relative; border: 1px solid #eee; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; }
+        .cover-img-container img { width: 100%; height: 100%; object-fit: cover; }
+        .mini-controls { display: flex; justify-content: center; gap: 10px; padding: 0 20px; }
+        .mini-input { border: none; border-bottom: 1px solid #ddd; font-size: 12px; padding: 4px; color: #999; width: 40%; background: transparent; text-align: center; }
+        .mini-input:focus { outline: none; border-bottom-color: var(--primary); color: #333; }
+
+        /* 通用樣式 */
+        h2 { border-left: 5px solid var(--primary); padding-left: 10px; color: #333; margin: 0 0 15px 0; font-size: 1.2rem; }
+        .input-group { display: flex; gap: 8px; margin-bottom: 15px; background: #f0f2f5; padding: 10px; border-radius: 8px; flex-direction: column; }
+        .input-row { display: flex; gap: 8px; }
+        input, textarea { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+        button { border: none; border-radius: 4px; padding: 8px 12px; cursor: pointer; }
+        .btn-add { background: var(--primary); color: white; }
+        .btn-del { background: #ffeded; color: #ff4d4d; border-radius: 20px; font-size: 12px; }
+        .list-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+        .calc-result { font-size: 1.5rem; color: var(--green); font-weight: bold; text-align: center; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="page">
-        <h2>📋 第一頁：出國清單</h2>
-        <div class="item"><input type="checkbox"> 護照與簽證 (有效期 6 個月以上)</div>
-        <div class="item"><input type="checkbox"> 機票與訂房證明 (電子檔/紙本)</div>
-        <div class="item"><input type="checkbox"> 外幣、信用卡、提款卡</div>
-        <div class="item"><input type="checkbox"> 行動電源、各國轉接頭</div>
-        <div class="item"><input type="checkbox"> 個人常備藥品、盥洗用品</div>
-        <div class="item"><input type="checkbox"> 換洗衣物、舒適鞋子</div>
-    </div>
+<div class="nav-bar">
+    <button class="nav-item active" onclick="goToPage(0)">🏠<span>封面</span></button>
+    <button class="nav-item" onclick="goToPage(1)">📋<span>清單</span></button>
+    <button class="nav-item" onclick="goToPage(2)">✈️<span>行程</span></button>
+    <button class="nav-item" onclick="goToPage(3)">💰<span>花費</span></button>
+    <button class="nav-item" onclick="goToPage(4)">🎁<span>伴手禮</span></button>
+    <button class="nav-item" onclick="goToPage(5)">🛠️<span>工具</span></button>
+</div>
 
-    <div class="page">
-        <h2>✈️ 第二頁：行程概覽</h2>
-        <div class="itinerary-day">
-            <span class="day-title">Day 1: 抵達與安頓</span>
-            <ul>
-                <li>搭機抵達目的地</li>
-                <li>辦理飯店 Check-in</li>
-                <li>飯店周邊探索、享用當地晚餐</li>
-            </ul>
-        </div>
-        <div class="itinerary-day">
-            <span class="day-title">Day 2: 城市地標之旅</span>
-            <ul>
-                <li>上午：造訪主要文化景點/古蹟</li>
-                <li>下午：市區商圈、地標性建築拍照</li>
-                <li>晚上：特色餐廳或夜景行程</li>
-            </ul>
-        </div>
-        <div class="itinerary-day">
-            <span class="day-title">Day 3: 購物與返程</span>
-            <ul>
-                <li>上午：前往伴手禮聚集區採購</li>
-                <li>下午：最後巡禮、整理行李</li>
-                <li>前往機場準備登機</li>
-            </ul>
-        </div>
-    </div>
+<div class="swiper">
+    <div class="swiper-wrapper">
+        
+        <div class="swiper-slide">
+            <div class="cover-page">
+                <h1 id="displayTitle">我的旅行手冊</h1>
+                <div id="displayDate">尚未設定日期</div>
+                
+                <div class="cover-img-container" onclick="document.getElementById('coverInput').click()">
+                    <img id="coverDisplay" src="" style="display:none;">
+                    <div style="color:#bbb; font-size: 14px;" id="hintText">＋ 點擊設定封面照片</div>
+                </div>
 
-    <div class="page">
-        <h2>🎁 第三頁：伴手禮任務</h2>
-        <div class="item"><input type="checkbox"> 當地限定零食 / 點心</div>
-        <div class="item"><input type="checkbox"> 藥妝、護膚保養品</div>
-        <div class="item"><input type="checkbox"> 紀念性文創小物 (如明信片、磁鐵)</div>
-        <div class="item"><input type="checkbox"> 長輩/主管專用伴手禮盒</div>
-        <div class="item"><input type="checkbox"> 代購委託項目</div>
-    </div>
+                <div class="mini-controls">
+                    <input type="file" id="coverInput" accept="image/*" style="display:none" onchange="loadCover(this)">
+                    <input type="text" class="mini-input" placeholder="修改標題..." oninput="updateTitle(this.value)">
+                    <input type="date" class="mini-input" onchange="updateDate(this.value)">
+                </div>
+            </div>
+        </div>
 
+        <div class="swiper-slide">
+            <h2>📋 準備清單</h2>
+            <div class="input-group">
+                <div class="input-row">
+                    <input type="text" id="todoInput" placeholder="自定義項目...">
+                    <button class="btn-add" onclick="addItem('todoList', 'todoInput')">＋</button>
+                </div>
+            </div>
+            <div id="todoList">
+                <div class="list-item"><span><input type="checkbox"> 護照 & 簽證</span><button class="btn-del" onclick="this.parentElement.remove()">刪除</button></div>
+                <div class="list-item"><span><input type="checkbox"> 外幣 & 信用卡</span><button class="btn-del" onclick="this.parentElement.remove()">刪除</button></div>
+            </div>
+        </div>
+
+        <div class="swiper-slide">
+            <h2>✈️ 行程規劃</h2>
+            <div class="input-group">
+                <input type="date" id="itinDate" style="margin-bottom: 8px;">
+                <div class="input-row">
+                    <input type="text" id="itineraryInput" placeholder="行程景點...">
+                    <button class="btn-add" onclick="addItinerary()">＋</button>
+                </div>
+            </div>
+            <div id="itineraryList"></div>
+        </div>
+
+        <div class="swiper-slide">
+            <h2>💰 每日花費</h2>
+            <div class="input-group">
+                <input type="text" id="expName" placeholder="項目">
+                <div class="input-row">
+                    <input type="number" id="expAmount" placeholder="金額">
+                    <button class="btn-add" onclick="addExpense()" style="flex:1;">記帳</button>
+                </div>
+            </div>
+            <div id="expenseList"></div>
+            <div style="background:var(--accent); color:white; padding:15px; border-radius:8px; text-align:center; font-size:1.1rem; margin-top:15px;">總支出: $<span id="totalDisplay">0</span></div>
+        </div>
+
+        <div class="swiper-slide">
+            <h2>🎁 伴手禮清單</h2>
+            <div class="input-group">
+                <div class="input-row">
+                    <input type="text" id="giftInput" placeholder="品名...">
+                    <input type="file" id="giftImgInput" accept="image/*" style="display:none" onchange="previewGiftImg(this)">
+                    <button onclick="document.getElementById('giftImgInput').click()" style="background:#ddd;">📷</button>
+                </div>
+                <div class="input-row" style="margin-top:8px;">
+                    <input type="number" id="giftAmount" placeholder="價格">
+                    <button class="btn-add" onclick="addGift()" style="flex:1;">＋</button>
+                </div>
+            </div>
+            <div id="giftPreView" style="margin-bottom:10px;"></div>
+            <div id="giftList"></div>
+        </div>
+
+        <div class="swiper-slide">
+            <h2>🛠️ 旅遊工具箱</h2>
+            <div style="background: #fffbe6; border: 1px solid #ffe58f; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                <strong>💱 匯率換算</strong>
+                <div style="display:flex; gap:5px; margin-top:10px;">
+                    <input type="number" id="rate" placeholder="匯率">
+                    <input type="number" id="foreignAmount" placeholder="外幣金額" oninput="calcExchange()">
+                </div>
+                <div class="calc-result">≈ NT$ <span id="twAmount">0</span></div>
+            </div>
+            <h2>📝 旅遊筆記</h2>
+            <textarea id="noteArea" placeholder="紀錄重要資訊..."></textarea>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    const swiper = new Swiper('.swiper', {
+        on: { slideChange: function () {
+            document.querySelectorAll('.nav-item').forEach((item, idx) => {
+                item.classList.toggle('active', idx === this.activeIndex);
+            });
+        }}
+    });
+    function goToPage(index) { swiper.slideTo(index); }
+
+    function loadCover(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                const img = document.getElementById('coverDisplay');
+                img.src = e.target.result;
+                img.style.display = 'block';
+                document.getElementById('hintText').style.display = 'none';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    function updateTitle(val) { document.getElementById('displayTitle').innerText = val || "我的旅行手冊"; }
+    function updateDate(val) { document.getElementById('displayDate').innerText = val ? "出發日期：" + val : "尚未設定日期"; }
+
+    function addItem(listId, inputId) {
+        const input = document.getElementById(inputId);
+        if (!input.value) return;
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        div.innerHTML = `<span><input type="checkbox"> ${input.value}</span><button class="btn-del" onclick="this.parentElement.remove()">刪除</button>`;
+        document.getElementById(listId).appendChild(div);
+        input.value = '';
+    }
+
+    function addItinerary() {
+        const d = document.getElementById('itinDate'), t = document.getElementById('itineraryInput');
+        if (!t.value) return;
+        const dateVal = d.value ? d.value.split('-').slice(1).join('/') : '未定';
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        div.innerHTML = `<span><span style="font-size:11px;background:#e8f4fd;color:#3498db;padding:2px 6px;border-radius:4px;margin-right:8px;">${dateVal}</span>${t.value}</span>
+                         <button class="btn-del" onclick="this.parentElement.remove()">刪除</button>`;
+        document.getElementById('itineraryList').appendChild(div);
+        t.value = '';
+    }
+
+    let giftTempImg = '';
+    function previewGiftImg(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = e => { giftTempImg = e.target.result; document.getElementById('giftPreView').innerHTML = `📷 已選取`; };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    function addGift() {
+        const i = document.getElementById('giftInput'), a = document.getElementById('giftAmount');
+        if (!i.value) return;
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        const imgHtml = giftTempImg ? `<img src="${giftTempImg}" style="width:50px;height:50px;object-fit:cover;border-radius:4px;">` : `<div style="width:50px;height:50px;background:#eee;border-radius:4px;"></div>`;
+        const p = a.value ? `<span style="color:#e67e22;font-weight:bold;margin-left:10px;">$${a.value}</span>` : '';
+        div.innerHTML = `<div style="display:flex;align-items:center;gap:10px;">${imgHtml} <div>${i.value}${p}</div></div><button class="btn-del" onclick="this.parentElement.remove()">刪除</button>`;
+        document.getElementById('giftList').appendChild(div);
+        i.value = ''; a.value = ''; giftTempImg = ''; document.getElementById('giftPreView').innerHTML = '';
+    }
+
+    let total = 0;
+    function addExpense() {
+        const n = document.getElementById('expName'), a = document.getElementById('expAmount');
+        if (!n.value || !a.value) return;
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        div.innerHTML = `<span>${n.value}</span><span>$${a.value} <button class="btn-del" onclick="removeExp(this, ${a.value})">刪</button></span>`;
+        document.getElementById('expenseList').appendChild(div);
+        total += parseFloat(a.value);
+        document.getElementById('totalDisplay').innerText = total;
+        n.value = ''; a.value = '';
+    }
+    function removeExp(btn, val) {
+        total -= val;
+        document.getElementById('totalDisplay').innerText = total;
+        btn.parentElement.parentElement.remove();
+    }
+    function calcExchange() {
+        const r = document.getElementById('rate').value;
+        const f = document.getElementById('foreignAmount').value;
+        if (r && f) document.getElementById('twAmount').innerText = Math.round(r * f);
+    }
+</script>
 </body>
 </html>
